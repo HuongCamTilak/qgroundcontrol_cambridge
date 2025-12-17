@@ -21,6 +21,8 @@ TakeoffMissionItem::TakeoffMissionItem(PlanMasterController* masterController, b
     : SimpleMissionItem (masterController, flyView, forLoad)
     , _settingsItem     (settingsItem)
 {
+    _masterController = masterController;
+    _setupMavlinkSubscription();
     _init(forLoad);
 }
 
@@ -29,6 +31,8 @@ TakeoffMissionItem::TakeoffMissionItem(MAV_CMD takeoffCmd, PlanMasterController*
     , _settingsItem     (settingsItem)
 {
     setCommand(takeoffCmd);
+    _masterController = masterController;
+    _setupMavlinkSubscription();
     _init(forLoad);
 }
 
@@ -36,12 +40,15 @@ TakeoffMissionItem::TakeoffMissionItem(const MissionItem& missionItem, PlanMaste
     : SimpleMissionItem (masterController, flyView, missionItem)
     , _settingsItem     (settingsItem)
 {
+    _masterController = masterController;
+    _setupMavlinkSubscription();
     _init(forLoad);
+    
 }
 
 TakeoffMissionItem::~TakeoffMissionItem()
 {
-
+    _masterController = nullptr;
 }
 
 void TakeoffMissionItem::_init(bool forLoad)
@@ -185,8 +192,66 @@ void TakeoffMissionItem::setLaunchCoordinate(const QGeoCoordinate& launchCoordin
                     distance = altitude * 1.5;
                 }
             }
-            takeoffCoordinate = launchCoordinate.atDistanceAndAzimuth(distance, 0);
+            _setCurrentVehicleAttitude();
+            takeoffCoordinate = launchCoordinate.atDistanceAndAzimuth(distance, _currentYaw);
         }
         SimpleMissionItem::setCoordinate(takeoffCoordinate);
+    }
+}
+
+void TakeoffMissionItem::_setupMavlinkSubscription()
+{
+    // Connect to receive all MAVLink messages
+    connect(MAVLinkProtocol::instance(), &MAVLinkProtocol::messageReceived, 
+            this, &TakeoffMissionItem::_handleMavlinkMessage);
+}
+
+void TakeoffMissionItem::_setCurrentVehicleAttitude()
+{
+    // Use the stored values from MAVLink messages
+    missionItem().setParam1(_currentPitch);  // Pitch
+    missionItem().setParam4(_currentYaw);    // Yaw
+}
+
+void TakeoffMissionItem::_handleMavlinkMessage(LinkInterface* link, const mavlink_message_t& message)
+{
+    Q_UNUSED(link)
+    
+    // Handle ATTITUDE message (ID 30)
+    if (message.msgid == MAVLINK_MSG_ID_ATTITUDE) {
+        mavlink_attitude_t attitude;
+        mavlink_msg_attitude_decode(&message, &attitude);
+        
+        _currentPitch = qRadiansToDegrees(attitude.pitch);
+        _currentYaw = qRadiansToDegrees(attitude.yaw);
+        
+        if (_currentYaw < 0.0) {
+            _currentYaw += 360.0;
+        }
+        
+    }
+    
+    // Handle ATTITUDE_QUATERNION message (ID 31)
+    else if (message.msgid == MAVLINK_MSG_ID_ATTITUDE_QUATERNION) {
+        mavlink_attitude_quaternion_t attitudeQuat;
+        mavlink_msg_attitude_quaternion_decode(&message, &attitudeQuat);
+        
+        float quaternion[4] = {
+            attitudeQuat.q1,  // w
+            attitudeQuat.q2,  // x
+            attitudeQuat.q3,  // y
+            attitudeQuat.q4   // z
+        };
+        
+        float roll, pitch, yaw;
+        mavlink_quaternion_to_euler(quaternion, &roll, &pitch, &yaw);
+        
+        _currentPitch = qRadiansToDegrees(pitch);
+        _currentYaw = qRadiansToDegrees(yaw);
+        
+        if (_currentYaw < 0.0) {
+            _currentYaw += 360.0;
+        }
+        
     }
 }

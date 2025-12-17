@@ -10,6 +10,7 @@
 #pragma once
 
 #include "SimpleMissionItem.h"
+#include "MAVLinkProtocol.h"
 
 class PlanMasterController;
 class MissionSettingsItem;
@@ -53,11 +54,20 @@ public:
 
     //void setDirty(bool dirty) final;
 
+private slots:
+    void _handleMavlinkMessage(LinkInterface* link, const mavlink_message_t& message);
+
 signals:
     void launchCoordinateChanged            (const QGeoCoordinate& launchCoordinate);
     void launchTakeoffAtSameLocationChanged (bool launchTakeoffAtSameLocation);
 
 private:
+    void _setupMavlinkSubscription();
+    double _currentPitch = 0.0;
+    double _currentYaw = 0.0;
+    PlanMasterController* _masterController = nullptr;
+    void _setCurrentVehicleAttitude(void);
+
     void _init(bool forLoad);
     void _initLaunchTakeoffAtSameLocation(void);
 
