@@ -65,8 +65,8 @@ private:
     void _setupMavlinkSubscription();
     double _currentPitch = 0.0;
     double _currentYaw = 0.0;
-    PlanMasterController* _masterController = nullptr;
-    void _setCurrentVehicleAttitude(void);
+    void _setTakeoffAttitudefromCurrentVehicleAttitude(void);
+    void _setTakeoffAltitudeFromParameter(void);
 
     void _init(bool forLoad);
     void _initLaunchTakeoffAtSameLocation(void);

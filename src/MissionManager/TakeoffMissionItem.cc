@@ -16,12 +16,12 @@
 #include "MissionSettingsItem.h"
 #include "MultiVehicleManager.h"
 #include "Vehicle.h"
+#include "ParameterManager.h"
 
 TakeoffMissionItem::TakeoffMissionItem(PlanMasterController* masterController, bool flyView, MissionSettingsItem* settingsItem, bool forLoad)
     : SimpleMissionItem (masterController, flyView, forLoad)
     , _settingsItem     (settingsItem)
 {
-    _masterController = masterController;
     _setupMavlinkSubscription();
     _init(forLoad);
 }
@@ -31,7 +31,6 @@ TakeoffMissionItem::TakeoffMissionItem(MAV_CMD takeoffCmd, PlanMasterController*
     , _settingsItem     (settingsItem)
 {
     setCommand(takeoffCmd);
-    _masterController = masterController;
     _setupMavlinkSubscription();
     _init(forLoad);
 }
@@ -40,7 +39,6 @@ TakeoffMissionItem::TakeoffMissionItem(const MissionItem& missionItem, PlanMaste
     : SimpleMissionItem (masterController, flyView, missionItem)
     , _settingsItem     (settingsItem)
 {
-    _masterController = masterController;
     _setupMavlinkSubscription();
     _init(forLoad);
     
@@ -192,7 +190,8 @@ void TakeoffMissionItem::setLaunchCoordinate(const QGeoCoordinate& launchCoordin
                     distance = altitude * 1.5;
                 }
             }
-            _setCurrentVehicleAttitude();
+            _setTakeoffAttitudefromCurrentVehicleAttitude();
+            _setTakeoffAltitudeFromParameter();
             takeoffCoordinate = launchCoordinate.atDistanceAndAzimuth(distance, _currentYaw);
         }
         SimpleMissionItem::setCoordinate(takeoffCoordinate);
@@ -206,7 +205,7 @@ void TakeoffMissionItem::_setupMavlinkSubscription()
             this, &TakeoffMissionItem::_handleMavlinkMessage);
 }
 
-void TakeoffMissionItem::_setCurrentVehicleAttitude()
+void TakeoffMissionItem::_setTakeoffAttitudefromCurrentVehicleAttitude()
 {
     // Use the stored values from MAVLink messages
     missionItem().setParam1(_currentPitch);  // Pitch
@@ -253,5 +252,17 @@ void TakeoffMissionItem::_handleMavlinkMessage(LinkInterface* link, const mavlin
             _currentYaw += 360.0;
         }
         
+    }
+}
+
+void TakeoffMissionItem::_setTakeoffAltitudeFromParameter()
+{
+    Vehicle* activeVehicle = MultiVehicleManager::instance()->activeVehicle();
+    ParameterManager* paramMg = activeVehicle->parameterManager();
+    
+    if (paramMg->parameterExists(ParameterManager::defaultComponentId, "MIS_TAKEOFF_ALT")) {
+        Fact* param = paramMg->getParameter(ParameterManager::defaultComponentId,"MIS_TAKEOFF_ALT");
+        double altitude = param->rawValue().toDouble();
+        this->altitude()->setRawValue(altitude);
     }
 }
