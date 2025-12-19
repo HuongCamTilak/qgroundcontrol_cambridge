@@ -14,6 +14,7 @@ import QtLocation
 import QtPositioning
 import QtQuick.Layouts
 import QtQuick.Window
+import Qt.labs.platform 1.1 as Labs
 
 import QGroundControl
 import QGroundControl.FlightMap
@@ -281,9 +282,27 @@ Item {
         _missionController.insertComplexMissionItem(complexItemName, mapCenter(), nextIndex, true /* makeCurrentItem */)
     }
 
+    Timer {
+        id: saveTimer
+        interval: 500    // delay in milliseconds (0.5s)
+        repeat: false    // only fire once
+        onTriggered: {
+            _saveMissionPlan()
+        }
+    }
+
+    function _saveMissionPlan() {
+        var desktop = Labs.StandardPaths.writableLocation(Labs.StandardPaths.DesktopLocation)
+        var desktopPath = desktop.toString().replace(/^file:\/\//, '')
+        var timestamp = new Date().toISOString().replace(/[:.]/g, "_")
+        var filePath = desktopPath + "/Mission_Takeoff_" + timestamp + ".plan"
+        _planMasterController.saveToFile(filePath)
+    }
+
     function insertTakeoffItemAfterCurrent() {
         var nextIndex = _missionController.currentPlanViewVIIndex + 1
         _missionController.insertTakeoffItem(mapCenter(), nextIndex, true /* makeCurrentItem */)
+        saveTimer.start()
     }
 
     function insertLandItemAfterCurrent() {
