@@ -63,9 +63,8 @@ signals:
 
 private:
     void _setupMavlinkSubscription();
-    double _currentPitch = 0.0;
     double _currentYaw = 0.0;
-    void _setTakeoffAttitudefromCurrentVehicleAttitude(void);
+    void _setTakeoffHeadingfromCurrentVehicleAttitude(void);
     void _setTakeoffAltitudeFromParameter(void);
 
     void _init(bool forLoad);
