@@ -61,13 +61,11 @@ void TakeoffMissionItem::_init(bool forLoad)
     }
 
     QGeoCoordinate homePosition = _settingsItem->coordinate();
-    if (!homePosition.isValid()) {
-        Vehicle* activeVehicle = MultiVehicleManager::instance()->activeVehicle();
-        if (activeVehicle) {
-            homePosition = activeVehicle->homePosition();
-            if (homePosition.isValid()) {
-                _settingsItem->setCoordinate(homePosition);
-            }
+    Vehicle* activeVehicle = MultiVehicleManager::instance()->activeVehicle();
+    if (activeVehicle) {
+        homePosition = QGeoCoordinate(activeVehicle->coordinate().latitude(), activeVehicle->coordinate().longitude(), _settingsItem->coordinate().altitude());
+        if (homePosition.isValid()) {
+            _settingsItem->setCoordinate(homePosition);
         }
     }
 
@@ -77,6 +75,7 @@ void TakeoffMissionItem::_init(bool forLoad)
     }
 
     _initLaunchTakeoffAtSameLocation();
+    qInfo() << "_launchTakeoffAtSameLocation = " << _launchTakeoffAtSameLocation;
     if (_launchTakeoffAtSameLocation && homePosition.isValid()) {
         SimpleMissionItem::setCoordinate(homePosition);
     }
@@ -126,6 +125,7 @@ bool TakeoffMissionItem::isTakeoffCommand(MAV_CMD command)
 void TakeoffMissionItem::_initLaunchTakeoffAtSameLocation(void)
 {
     if (specifiesCoordinate()) {
+        qInfo() << "NO COORDINATE";
         if (_controllerVehicle->fixedWing() || _controllerVehicle->vtol()) {
             setLaunchTakeoffAtSameLocation(false);
         } else {
@@ -140,6 +140,7 @@ void TakeoffMissionItem::_initLaunchTakeoffAtSameLocation(void)
 
         }
     } else {
+        qInfo() << "specifies coordinate";
         setLaunchTakeoffAtSameLocation(true);
     }
 }
@@ -230,11 +231,14 @@ void TakeoffMissionItem::_handleMavlinkMessage(LinkInterface* link, const mavlin
 void TakeoffMissionItem::_setTakeoffAltitudeFromParameter()
 {
     Vehicle* activeVehicle = MultiVehicleManager::instance()->activeVehicle();
-    ParameterManager* paramMg = activeVehicle->parameterManager();
-    
-    if (paramMg->parameterExists(ParameterManager::defaultComponentId, "MIS_TAKEOFF_ALT")) {
-        Fact* param = paramMg->getParameter(ParameterManager::defaultComponentId,"MIS_TAKEOFF_ALT");
-        double altitude = param->rawValue().toDouble();
-        this->altitude()->setRawValue(altitude);
+    if(activeVehicle)
+    {
+        ParameterManager* paramMg = activeVehicle->parameterManager();
+        
+        if (paramMg->parameterExists(ParameterManager::defaultComponentId, "MIS_TAKEOFF_ALT")) {
+            Fact* param = paramMg->getParameter(ParameterManager::defaultComponentId,"MIS_TAKEOFF_ALT");
+            double altitude = param->rawValue().toDouble();
+            this->altitude()->setRawValue(altitude);
+        }
     }
 }
