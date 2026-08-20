@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="256" height="256">
+  <!-- Transparent background, flat QGC toolbar-icon style -->
+
+  <!-- GPS-denied glyph: satellite bars crossed out, meaning "operating without GPS" -->
+  <g fill="#9aa1b2">
+    <rect x="8" y="38" width="5" height="10" rx="1"/>
+    <rect x="16" y="32" width="5" height="16" rx="1"/>
+    <rect x="24" y="24" width="5" height="24" rx="1"/>
+    <rect x="32" y="16" width="5" height="32" rx="1"/>
+  </g>
+  <line x1="5" y1="12" x2="40" y2="50" stroke="#9aa1b2" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Tool/gear glyph representing the GPS-denied nav module -->
+  <g fill="none" stroke="#ffffff" stroke-width="3" stroke-linejoin="round">
+    <path d="M46 30
+             l0 -4 l4 -1 l1.5 -3.6 l-2.3 -3.4 l2.8 -2.8 l3.4 2.3 l3.6 -1.5 l1 -4 l4 0 l1 4 l3.6 1.5 l3.4 -2.3 l2.8 2.8 l-2.3 3.4 l1.5 3.6 l4 1 l0 4"
+             opacity="0"/>
+  </g>
+
+  <!-- Simplified gear badge -->
+  <g transform="translate(46,44)">
+    <circle r="13" fill="#1a1d29" stroke="#3ddc84" stroke-width="2"/>
+    <g fill="#3ddc84">
+      <rect x="-1.6" y="-11" width="3.2" height="4" rx="0.8"/>
+      <rect x="-1.6" y="7" width="3.2" height="4" rx="0.8"/>
+      <rect x="-11" y="-1.6" width="4" height="3.2" rx="0.8"/>
+      <rect x="7" y="-1.6" width="4" height="3.2" rx="0.8"/>
+      <rect x="-1.6" y="-11" width="3.2" height="4" rx="0.8" transform="rotate(45)"/>
+      <rect x="-1.6" y="7" width="3.2" height="4" rx="0.8" transform="rotate(45)"/>
+      <rect x="-11" y="-1.6" width="4" height="3.2" rx="0.8" transform="rotate(45)"/>
+      <rect x="7" y="-1.6" width="4" height="3.2" rx="0.8" transform="rotate(45)"/>
+    </g>
+    <circle r="6" fill="#1a1d29" stroke="#3ddc84" stroke-width="2"/>
+    <path d="M-3 0 L-0.8 2.5 L3.5 -2.5" fill="none" stroke="#3ddc84" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <text x="32" y="60" font-family="Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#3ddc84" text-anchor="middle">GPS-DENIED: OK</text>
+</svg>

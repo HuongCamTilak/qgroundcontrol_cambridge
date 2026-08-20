@@ -39,6 +39,8 @@ target_sources(${CMAKE_PROJECT_NAME}
         VehicleDistanceSensorFactGroupTest.h
         VehicleLinkManagerTest.cc
         VehicleLinkManagerTest.h
+        VehicleOdometryFactGroupTest.cc
+        VehicleOdometryFactGroupTest.h
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -65,3 +67,4 @@ add_qgc_test(SendMavCommandWithSignallingTest LABELS Integration Vehicle)
 add_qgc_test(SetEstimatorOriginTest LABELS Integration Vehicle)
 add_qgc_test(VehicleDistanceSensorFactGroupTest LABELS Integration Vehicle)
 add_qgc_test(VehicleLinkManagerTest LABELS Integration Vehicle SERIAL)
+add_qgc_test(VehicleOdometryFactGroupTest LABELS Unit Vehicle)

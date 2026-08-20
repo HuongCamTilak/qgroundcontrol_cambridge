@@ -23,6 +23,7 @@ qt_add_qml_module(ToolbarModule
         MainStatusIndicatorOfflinePage.qml
         ModeIndicator.qml
         MultiVehicleSelector.qml
+        OdometryIndicator.qml
         ParameterDownloadProgress.qml
         PlanViewToolBar.qml
         RCRSSIIndicator.qml
@@ -73,6 +74,8 @@ qt_add_resources(${CMAKE_PROJECT_NAME} toolbar_qmlimages
         "${CMAKE_SOURCE_DIR}/src/Toolbar/Images/HamburgerThin.svg"
         "${CMAKE_SOURCE_DIR}/src/Toolbar/Images/Joystick.png"
         "${CMAKE_SOURCE_DIR}/src/Toolbar/Images/Megaphone.svg"
+        "${CMAKE_SOURCE_DIR}/src/Toolbar/Images/OdometryHealthy.svg"
+        "${CMAKE_SOURCE_DIR}/src/Toolbar/Images/OdometryUnhealthy.svg"
         "${CMAKE_SOURCE_DIR}/src/Toolbar/Images/PaperPlane.svg"
         "${CMAKE_SOURCE_DIR}/src/Toolbar/Images/Plan.svg"
         "${CMAKE_SOURCE_DIR}/src/Toolbar/Images/Quad.svg"

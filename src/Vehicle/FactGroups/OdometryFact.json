@@ -1,0 +1,54 @@
+{
+    "version":      1,
+    "fileType":  "FactMetaData",
+    "QGC.MetaData.Facts":
+[
+{
+    "name":             "x",
+    "shortDesc": "X",
+    "type":             "double",
+    "decimalPlaces":    1,
+    "units":            "m"
+},
+{
+    "name":             "y",
+    "shortDesc": "Y",
+    "type":             "double",
+    "decimalPlaces":    1,
+    "units":            "m"
+},
+{
+    "name":             "z",
+    "shortDesc": "Z",
+    "type":             "double",
+    "decimalPlaces":    1,
+    "units":            "vertical m"
+},
+{
+    "name":             "xVariance",
+    "shortDesc": "X Variance",
+    "type":             "double",
+    "decimalPlaces":    4,
+    "units":            "m^2"
+},
+{
+    "name":             "yVariance",
+    "shortDesc": "Y Variance",
+    "type":             "double",
+    "decimalPlaces":    4,
+    "units":            "m^2"
+},
+{
+    "name":             "zVariance",
+    "shortDesc": "Z Variance",
+    "type":             "double",
+    "decimalPlaces":    4,
+    "units":            "m^2"
+},
+{
+    "name":             "quality",
+    "shortDesc":        "Quality",
+    "type":             "int8"
+}
+]
+}
